@@ -2,8 +2,6 @@
 
 A program for automatically collecting items in Genshin impact
 
-### [Link to download the latest version of GIMP](https://github.com/Demetrous-fd/Genshin-impact-auto-pickup/releases/latest)
-
 ## Requirements
 
 1. Python 3.8.10

@@ -2,6 +2,7 @@
 
 A program for automatically collecting items in Genshin impact
 
+original repo: [Demetrous-fd/Genshin-impact-auto-pickup](https://github.com/Demetrous-fd/Genshin-impact-auto-pickup)
 ## Requirements
 
 1. Python 3.8.10

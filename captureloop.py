@@ -35,7 +35,7 @@ COLORS = {
     13: (200, 0, 170)
 }
 
-
+TITLES = ["Genshin Impact", "原神"]
 class Model:
     def __init__(self, path_weights: Path or str = PATH_WEIGHTS, path_cfg: Path or str = PATH_MODEL_CFG,
                  path_names: Path or str = PATH_NAMES, colors_names=None,
@@ -87,7 +87,7 @@ class Model:
             return True if current_class in classes else False
 
         elif isinstance(current_class, str):
-            classes = [self.classes_name[class_name[0]] for class_name in classes]
+            classes = [self.classes_name[class_name] for class_name in classes]
             return True if current_class in classes else False
 
         else:
@@ -108,12 +108,12 @@ class Model:
 
 
 class CaptureLoop:
-    def __init__(self, model: Model, config, show_capture: bool = False, app_title: str = "Genshin Impact"):
+    def __init__(self, model: Model, config, show_capture: bool = False, app_titles = TITLES):
         self.__model = model
         self.__frame_rate = 1000 // config["FPS"] if config["FPS"] != 0 else 0
         self.__click_rate = config["Click rate"]
         self.__key = get_code(config["Key"]) if isinstance(config["Key"], str) else config["Key"]
-        self.__app_title = app_title
+        self.__app_titles = app_titles
         self.__show_capture = show_capture
 
         print(f"CaptureLoop init, FPS: {config['FPS']}, Click rate: {config['Click rate']}, Key: {get_key(self.__key)}")
@@ -126,12 +126,12 @@ class CaptureLoop:
         counter2 = time.perf_counter()
 
         while 1:
-            if getActiveWindowTitle() == self.__app_title:
+            if (current_title := getActiveWindowTitle()) in self.__app_titles:
                 if (time.perf_counter() - counter1) * 1000 >= self.__frame_rate:
                     start = time.time()
 
                     fps_count += 1
-                    bbox = get_actions_rect(self.__app_title)
+                    bbox = get_actions_rect(current_title)
                     frame = get_frame(bbox)
                     classes, scores, boxes = self.__model.detect(frame)
 
@@ -162,14 +162,14 @@ class QCaptureLoop(QThread):
     sendEvent = Signal(object)
 
     def __init__(self, parent, model: Model, config,
-                 app_title: str = "Genshin Impact", show_capture: bool = False):
+                 app_titles = TITLES, show_capture: bool = False):
         super(QCaptureLoop, self).__init__(parent)
 
         self.__model = model
         self.__frame_rate = 1000 // config["FPS"] if config["FPS"] != 0 else 0
         self.__click_rate = config["Click rate"]
         self.__key = get_code(config["Key"]) if isinstance(config["Key"], str) else config["Key"]
-        self.__app_title = app_title
+        self.__app_titles = app_titles
 
         self.__show_capture = show_capture
         self.__isRunning = True
@@ -218,12 +218,12 @@ class QCaptureLoop(QThread):
         while self.__isRunning:
             QApplication.processEvents()
 
-            if getActiveWindowTitle() == self.__app_title and not self.__disable:
+            if (current_title := getActiveWindowTitle()) in self.__app_titles and not self.__disable:
                 self.__gicap()
                 if (time.perf_counter() - counter1) * 1000 >= self.__frame_rate:
                     start = time.time()
                     fps_count += 1
-                    bbox = get_actions_rect(self.__app_title)
+                    bbox = get_actions_rect(current_title)
                     frame = get_frame(bbox)
                     classes, scores, boxes = self.__model.detect(frame)
 

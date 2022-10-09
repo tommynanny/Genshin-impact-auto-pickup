@@ -28,7 +28,7 @@ if __name__ == '__main__':
             config = read_config()
             model = Model(dnn_target=config["Target"])
             loop = CaptureLoop(model, config, show_capture=args.show_capture)
-
+            loop.run()
         else:
             app = QtWidgets.QApplication([])
             main = MainWindow(None, show_capture=args.show_capture)

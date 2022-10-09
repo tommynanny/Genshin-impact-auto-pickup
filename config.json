@@ -1,6 +1,6 @@
 {
-    "Target": "CPU",
-    "FPS": 5,
-    "Click rate": "Normal",
+    "Target": "OpenCL",
+    "FPS": 0,
+    "Click rate": "Ultra fast",
     "Key": 33
 }
